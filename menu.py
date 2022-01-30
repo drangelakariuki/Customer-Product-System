@@ -1,8 +1,8 @@
 import datetime
 import os
-import customer_operations
-import product_operations
-import purchase_operations
+from customer_operations import customer_display_menu
+from product_operations import product_display_menu
+from purchase_operations import product_operations, purchase_operations
 
 
 def menu_selection():
@@ -30,10 +30,10 @@ def menu_selection():
 def selection_calls():
     selection = menu_selection()
     if selection == '1':
-        customer_operations()
+        customer_display_menu()
 
     elif selection == '2':
-        product_operations()
+        product_display_menu()
 
     elif selection == '3':
         purchase_operations()
