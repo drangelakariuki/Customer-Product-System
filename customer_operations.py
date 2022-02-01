@@ -62,12 +62,10 @@ def find_customer():
         for line in lines:
             line_stripped = line.strip()
             line_list = line_stripped.split(' ')
-            #print(type(line_list[0]))
             if line_list[0] == customer_id:
                 print('CustomerID: ', line_list[0])
                 print('Customer Name: ', line_list[1])
                 print('Customer Address: ', line_list[2])
-
 
 
 def update_customer():
