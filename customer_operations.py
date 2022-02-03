@@ -1,8 +1,27 @@
-# handling customer functions
-import os
+# Customer operations with OOP
+# Perfect on use of lists # Unique ID checker
 
-customer_file = open('customer.txt', 'a')
+CUSTOMERS = []
 
+
+class Customer:
+
+    def __init__(self, customer_id: str, customer_name: str, customer_address: str):
+        self.id = customer_id
+        self.name = customer_name
+        self.address = customer_address
+        # actions to execute
+
+        # Customer.CUSTOMERS.append(self)
+
+    def __repr__(self):  # helps readability
+        return f"{self.id}, {self.name},{self.address}"
+
+
+# customer1 = Customer('1', 'Angela', 'Juja')
+# customer2 = Customer('2', 'Guantai', 'Embu')
+
+# print(Customer.CUSTOMERS)
 
 def customer_display_menu():
     print("Welcome to the customer operations menu! Please press enter to continue.")
@@ -15,50 +34,62 @@ def customer_display_menu():
         "        5. Delete Customer")
     selection = input('Enter the choice: ')
     if selection == '1':
-        view_customers()
+        add_customers()
     elif selection == '2':
         find_customer()
     elif selection == '3':
-        new_customer()
+        delete_customer()
     elif selection == '4':
         update_customer()
     elif selection == '5':
-        delete_customer()
+        view_customers()
     else:
         print('\nValue: {} did not match any menu choice'.format(selection))
 
         customer_display_menu()
 
 
-def view_customers():
-    with open('customer.txt', "r") as customers:
-        customers_contents = customers.read()
-        print(customers_contents)
-
-
-def new_customer():  # adding new customer and creating a unique ID.
-    key = open("primary_key.txt", "r")
+def add_customers():
+    key = open("customer_primary_key.txt", "r")
     prim_key = key.read()
     if prim_key == "":
         p_key = 1
-        key = open("primary_key.txt", "w")
+        key = open("customer_primary_key.txt", "w")
         key.write(str(p_key))
     else:
         p_key = int(prim_key) + 1
-        key = open("primary_key.txt", "w")
+        key = open("customer_primary_key.txt", "w")
         key.write(str(p_key))
-    with open('customer.txt', "a") as customer_file1:
-        customer_name = input("Enter the customer's name: ")
-        customer_address = input("Enter the customer's address: ")
-        customer_file.write(str(p_key) + ' ' + customer_name + ' ' + customer_address + '\n')
+    customer_id = str(p_key)
+    customer_name = input('Enter full customer name: ')
+    customer_address = input('Enter customer address: ')
 
-    print('New Customer added!')
+    new_customer = Customer(customer_id, customer_name, customer_address)
+    CUSTOMERS.append(new_customer)
+
+    # add_another_customer = input('Do you want to add another customer? Enter y or n. ')
+    #
+    # if add_another_customer.lower == 'y':
+    #     add_customers()
+    #
+    # elif add_another_customer.lower == 'n':
+    with open('customer.txt', 'a') as product_file:
+        for product in CUSTOMERS:
+            # add the product to file
+            product_file.write(str(product.id) + ' ' + product.name + ' ' + product.address + '\n')
+        print('Customer added to file successfully.')
+
+
+# add_customers()
 
 
 def find_customer():
+    """
+    Find a specific customer and prints the customer
+    """
     with open('customer.txt', "r+") as customerfile2:
-        lines = customerfile2.readlines()
         customer_id = input('Enter the customer ID to find: ')
+        lines = customerfile2.readlines()  # loads data from the file to a list called lines
         for line in lines:
             line_stripped = line.strip()
             line_list = line_stripped.split(' ')
@@ -68,21 +99,10 @@ def find_customer():
                 print('Customer Address: ', line_list[2])
 
 
-def update_customer():
-    with open('customer.txt', "r+") as customerfile4:
-        lines = customerfile4.readlines()
-        customerfile4.seek(0)
-        customer_id = input('Enter the customer ID to update: ')
-        for line in lines:
-            if not line.startswith(customer_id):
-                customerfile4.write(line)
-        customerfile4.truncate()
-        customer_name = input("Enter the customer's name: ")
-        customer_address = input("Enter the customer's address: ")
-        customerfile4.write(customer_id + ' ' + customer_name + ' ' + customer_address + '\n')
+# find_customer()
 
 
-def delete_customer():
+def delete_customer():  # deletes a particular customer
     with open('customer.txt', "r+") as customerfile3:
         lines = customerfile3.readlines()
         customerfile3.seek(0)
@@ -95,12 +115,40 @@ def delete_customer():
 
 # delete_customer()
 
+def update_customer():
+    customer_id = input('Enter the customer ID to update: ')
+    with open('customer.txt', 'r+') as customerfile4:
+        lines = customerfile4.readlines()
+        customerfile4.seek(0)
+        for line in lines:
+            line_stripped = line.strip()
+            line_split = line_stripped.split(' ')
+            if line_split[0] == customer_id:
+                print('Found Customer!', line_split[1])
+                print(line_split)
+            elif line_split[0] != customer_id:
+                customerfile4.write(line)
+        customerfile4.truncate()  # cut out the customer to be updated
+        new_name = input('Enter new customer name : ')
+        line_split[1] = new_name
+        new_address = input('Enter new customer address: ')
+        line_split[2] = new_address
+        updated_customer = Customer(customer_id, new_name, new_address)
+        CUSTOMERS.append(updated_customer)
+        with open('customer.txt', 'a+') as customerfile4:
+            for instance in CUSTOMERS:
+                customerfile4.write(instance.id + ' ' + instance.name + ' ' + instance.address + '\n')
+                print('Customer file updated successfully.')
 
+
+# update_customer()
+
+def view_customers():  # view all customers on the list
+    with open('customer.txt', "r") as customers:
+        customers_contents = customers.read()
+        print(customers_contents)
+
+
+# view_customers()
 if __name__ == '__main__':
     customer_display_menu()
-    # ask admin if they want to do something else
-    do_more = input('Would you like to do anything else? Type yes or no. ')
-    if do_more.lower() == 'no':
-        print('Welcome again!')
-    if do_more.lower() == 'yes':
-        customer_display_menu()

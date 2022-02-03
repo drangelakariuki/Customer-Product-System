@@ -1,8 +1,7 @@
 import os
 
-
+PRODUCTS = []
 class Product:
-    products = []
 
     def __init__(self, product_id, product_name, product_quantity, product_price):
         # assign to self object
@@ -11,7 +10,7 @@ class Product:
         self.amount = product_quantity
         self.price = product_price
         # actions to execute
-        Product.products.append(self)
+        # Product.products.append(self)
 
     def __repr__(self):
         return f'(\'{self.id}\', {self.name}, {self.amount}, {self.price})'
@@ -42,14 +41,11 @@ def product_display_menu():
 
         product_display_menu()
 
-        pass
-
 
 def view_products():
     with open('products.txt', "r") as products1:
         products_contents = products1.read()
         print(products_contents)
-
 
 # view_products()
 
@@ -74,14 +70,16 @@ def add_product():
     new_product_price = float(input('Enter the price of the product: '))
     new_product = Product(p_key, new_product_name, new_product_quantity, new_product_price)
     print(new_product)
+    PRODUCTS.append(new_product)
     # print(Product.products)
     with open('products.txt', 'a') as product_file:
-        for instance in Product.products:
-            product_file.write(str(instance.id) + ' ' + instance.name + ' ' + str(instance.amount) + ' ' + str(instance.price) + '\n')
-            print('Product added successfully.')
+        for product in PRODUCTS:
+            # add the product to file
+            product_file.write(str(product.id) + ' ' + product.name + ' ' + str(product.amount) + ' ' + str(product.price) + '\n')
+        print('Product added successfully.')
 
 
-add_product()
+# add_product()
 
 
 def find_product():
@@ -123,7 +121,7 @@ def update_product():
                 print(line_split)
             elif line_split[0] != product_id:
                 productfile2.write(line)
-        productfile2.truncate()
+        productfile2.truncate() # cut out the product to be updated
         new_name = input('Enter new name: ')
         line_split[1] = new_name
         new_amount = input('Enter new amount: ')
@@ -152,6 +150,7 @@ def delete_product():
             if not line.startswith(product_id):
                 productfile3.write(line)
         productfile3.truncate()
+        print('Product deleted successfully.')
 
 
 # delete_product()
@@ -161,3 +160,12 @@ def load_products():
     pass
 
 
+if __name__ == '__main__':
+    product_display_menu()
+    # ask admin if they want to do something else
+    do_more = input('Would you like to do anything else? Type yes or no. ')
+
+    if do_more.lower() == 'yes':
+        product_display_menu()
+    elif do_more.lower() == 'no':
+        print('Welcome again!')
