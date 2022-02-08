@@ -1,4 +1,4 @@
-# Customer-Product-System
-This is a basic point of sale sysstem written with python 3.8. The system is single user. The system has 3 modules which are:
-## Customer
-This module has 5 functions. The functions add a customer to file, update customer details, 
+# A CLI-Point of Sale System
+This is a interactive,single-user point of sale system. The system has 3 modules which are customer, product and purchase.The program enables the user to manage customerand product data, and conduct product purchases. The system is extremely easy to use and can be used for a small shop to manage customers, products and inventory.
+Attributes such as customer ID and Product ID are unique to each customer and product respectively. The 
+
