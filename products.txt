@@ -1,2 +1,2 @@
-1 Viagra 3 6000.0
-2 Viagra 1 6000.0
+1 Zinnat 6 2900.0
+2 Amoxicillin 4 420.0

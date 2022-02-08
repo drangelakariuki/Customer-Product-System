@@ -1,6 +1,8 @@
 import os
 
 PRODUCTS = []
+
+
 class Product:
 
     def __init__(self, product_id, product_name, product_quantity, product_price):
@@ -18,69 +20,142 @@ class Product:
 
 def product_display_menu():
     print("Welcome to the customer operations menu! Please press enter to continue.")
-    print(
-        " \n"
-        "        1. View all products\n"
-        "        2. Find product\n"
-        "        3. Add new product\n"
-        "        4. Update product details\n"
-        "        5. Delete product")
-    selection = input('Enter the choice: ')
-    if selection == '1':
-        view_products()
-    elif selection == '2':
-        find_product()
-    elif selection == '3':
-        add_product()
-    elif selection == '4':
-        update_product()
-    elif selection == '5':
-        delete_product()
-    else:
-        print('\nValue: {} did not match any menu choice'.format(selection))
+    while True:
+        selection = input(
+            " \n"
+            "        1. Add new product\n"
+            "        2. Update product details\n"
+            "        3. Delete product\n"
+            "        4. Find Product\n"
+            "        5. View all products\n"
+            "        Enter your choice(Enter O to exit): ")
+        if selection == '1':
+            add_product()
+        elif selection == '2':
+            update_product()
+        elif selection == '3':
+            delete_product()
+        elif selection == '4':
+            find_product()
+        elif selection == '5':
+            view_products()
+        elif selection == '0':
+            break
+        else:
+            print('\nValue: {} did not match any menu choice'.format(selection))
 
-        product_display_menu()
-
-
-def view_products():
-    with open('products.txt', "r") as products1:
-        products_contents = products1.read()
-        print(products_contents)
-
-# view_products()
 
 def add_product():
-    """
-    Adds new product"""
-    print('Create new product')
-    # create unique key
-    key = open("product_primary_key.txt", "r")
-    prim_key = key.read()
-    if prim_key == "":
-        p_key = 1
-        key = open("product_primary_key.txt", "w")
-        key.write(str(p_key))
-    else:
-        p_key = int(prim_key) + 1
-        key = open("product_primary_key.txt", "w")
-        key.write(str(p_key))
-    # create new instance
-    new_product_name = input('Enter the product name: ')
-    new_product_quantity = int(input('Enter the quantity of product: '))
-    new_product_price = float(input('Enter the price of the product: '))
-    new_product = Product(p_key, new_product_name, new_product_quantity, new_product_price)
+    def id_check():  # check uniqueness of  Product ID
+        with open("products.txt", "r") as product_file:  # open  product file in read mode
+            global product_id
+            product_id = input('Assign a unique Product ID(or Scan Barcode): ')
+            id_list = []
+            lines = product_file.readlines()  # loads data from the file to a list called lines
+            for line in lines:
+                line_stripped = line.strip()
+                line_list = line_stripped.split(' ')
+                id_list.append(line_list[0])
+            if product_id in id_list:
+                print("The product already exists. Enter a valid unique ID")
+                id_check()
+
+    id_check()
+    product_name = input('Enter the product name: ')
+    product_quantity = int(input('Enter the quantity of product: '))
+    product_price = float(input('Enter the price of the product: '))
+    new_product = Product(product_id, product_name, product_quantity, product_price)
     print(new_product)
     PRODUCTS.append(new_product)
     # print(Product.products)
-    with open('products.txt', 'a') as product_file:
-        for product in PRODUCTS:
-            # add the product to file
-            product_file.write(str(product.id) + ' ' + product.name + ' ' + str(product.amount) + ' ' + str(product.price) + '\n')
+    with open('products.txt', 'a+', newline='') as product_file:
+        for product in PRODUCTS:  # add the product to file
+            product_file.write(
+                product.id + ' ' + product.name + ' ' + str(product.amount) + ' ' + str(product.price) + '\n')
         print('Product added successfully.')
 
 
 # add_product()
 
+
+def update_product():
+    """
+    Reads in the product ID and edits the product attributes
+    """
+    print('Update product details')
+
+    def id_check():  # check uniqueness of  Product ID
+        with open("products.txt", "r") as productfile2:  # open  product file in read mode
+            global product_id
+            product_id = input('Enter ID to update: ')
+            id_list = []
+            lines = productfile2.readlines()  # loads data from the file to a list called lines
+            for line in lines:
+                line_stripped = line.strip()
+                line_list = line_stripped.split(' ')
+                id_list.append(line_list[0])
+            if product_id not in id_list:
+                print("Enter valid ID")
+                id_check()
+
+    id_check()
+    with open('products.txt', 'r+') as productfile2:
+        lines = productfile2.readlines()
+        productfile2.seek(0)
+        for line in lines:
+            line_stripped = line.strip()
+            line_split = line_stripped.split(' ')
+            if line_split[0] == product_id:
+                print('Found product!', line_split[1])
+                print(line_split) # the product in a line (just checking)
+            elif line_split[0] != product_id:
+                productfile2.write(line)
+        productfile2.truncate()  # cut out the product to be updated
+        new_name = input('Enter new name: ') # in case you want to change the name
+        line_split[1] = new_name
+        new_amount = input('Enter new amount: ')
+        line_split[2] = new_amount
+        new_price = input('Enter new price: ')
+        line_split[3] = new_price
+        updated_product = Product(product_id, new_name, new_amount, new_price)
+        PRODUCTS.append(updated_product)
+        with open('products.txt', 'a+') as productfile2:
+            for instance in PRODUCTS:
+                productfile2.write(
+                    instance.id + ' ' + instance.name + ' ' + str(instance.amount) + ' ' + str(instance.price) + '\n')
+            print('Product file updated successfully.')
+
+
+# update_product()
+
+
+def delete_product():
+    def id_check():  # check uniqueness of  Product ID
+        with open("products.txt", "r") as productfile3:  # open  product file in read mode
+            global product_id
+            product_id = input('Enter ID to delete: ')
+            id_list = []
+            lines = productfile3.readlines()  # loads data from the file to a list called lines
+            for line in lines:
+                line_stripped = line.strip()
+                line_list = line_stripped.split(' ')
+                id_list.append(line_list[0])
+            if product_id not in id_list:
+                print("Enter valid ID")
+                id_check()
+
+    id_check()
+    with open('products.txt', "r+") as productfile3:
+        lines = productfile3.readlines()
+        productfile3.seek(0)
+        for line in lines:
+            if not line.startswith(product_id):
+                productfile3.write(line)
+        productfile3.truncate()
+        print('Product deleted successfully.')
+
+
+# delete_product()
 
 def find_product():
     """
@@ -101,71 +176,14 @@ def find_product():
 
 # find_product()
 
-
-def update_product():
-    """
-    Reads in the product ID and edits the product attributes
-    """
-    print('Update product details')
-    update_list = []  # list with products not being updated
-
-    product_id = input('Enter the product ID to update: ')
-    with open('products.txt', 'r+') as productfile2:
-        lines = productfile2.readlines()
-        productfile2.seek(0)
-        for line in lines:
-            line_stripped = line.strip()
-            line_split = line_stripped.split(' ')
-            if line_split[0] == product_id:
-                print('Found product!', line_split[1])
-                print(line_split)
-            elif line_split[0] != product_id:
-                productfile2.write(line)
-        productfile2.truncate() # cut out the product to be updated
-        new_name = input('Enter new name: ')
-        line_split[1] = new_name
-        new_amount = input('Enter new amount: ')
-        line_split[2] = new_amount
-        new_price = input('Enter new price: ')
-        line_split[3] = new_price
-        print(line_split)
-        updated_product = Product(product_id, new_name, new_amount, new_price)
-        with open('products.txt', 'a+') as productfile2:
-
-            for instance in Product.products:
-                productfile2.write(
-                    instance.id + ' ' + instance.name + ' ' + str(instance.amount) + ' ' + str(instance.price) + '\n')
-                print('Product file updated successfully.')
+def view_products():
+    with open('products.txt', "r") as products1:
+        products_contents = products1.read()
+        print(products_contents)
 
 
-# update_product()
-
-
-def delete_product():
-    with open('products.txt', "r+") as productfile3:
-        lines = productfile3.readlines()
-        productfile3.seek(0)
-        product_id = input('Enter the product ID to delete: ')
-        for line in lines:
-            if not line.startswith(product_id):
-                productfile3.write(line)
-        productfile3.truncate()
-        print('Product deleted successfully.')
-
-
-# delete_product()
-
-
-def load_products():
-    pass
+# view_products()
 
 
 if __name__ == '__main__':
     product_display_menu()
-    # ask admin if they want to do something else
-    do_more = input('Would you like to do anything else? Type yes or no. ')
-
-    if do_more.lower() == 'yes':
-        product_display_menu()
-    elif do_more.lower() == 'no':
-        print('Welcome again!')

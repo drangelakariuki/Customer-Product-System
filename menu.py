@@ -1,8 +1,6 @@
-import datetime
-import os
 from customer_operations import customer_display_menu
 from product_operations import product_display_menu
-from purchase_operations import product_operations, purchase_operations
+from purchase_operations import purchase_display_menu
 
 
 def menu_selection():
@@ -36,7 +34,7 @@ def selection_calls():
         product_display_menu()
 
     elif selection == '3':
-        purchase_operations()
+        purchase_display_menu()
 
 
 if __name__ == '__main__':
@@ -45,7 +43,7 @@ if __name__ == '__main__':
     do_more = input('Would you like to do anything else? Type yes or no. ')
     if do_more.lower() == 'no':
         print('Welcome again!')
-    if do_more.lower() == 'yes':
+    elif do_more.lower() == 'yes':
         selection_calls()
 
 
