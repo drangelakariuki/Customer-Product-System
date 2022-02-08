@@ -8,7 +8,7 @@ This is a interactive,single-user point of sale system. The system is extremely 
  -The program is written in Python Language.
  - Text files(.txt)
  ## Clone
- 
+ https://github.com/drangelakariuki/Customer-Product-System.git
  ## Installation
  run menu.py
  ## To note
