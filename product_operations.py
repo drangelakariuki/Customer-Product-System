@@ -68,10 +68,11 @@ def add_product():
     print(new_product)
     PRODUCTS.append(new_product)
     # print(Product.products)
-    with open('products.txt', 'a+', newline='') as product_file:
-        for product in PRODUCTS:  # add the product to file
-            product_file.write(
-                product.id + ' ' + product.name + ' ' + str(product.amount) + ' ' + str(product.price) + '\n')
+    with open('products.txt', 'a+') as product_file:
+        product_file.write(product_id + ' ' + product_name + ' ' + str(product_quantity) + ' ' + str(product_price) + '\n')
+        # for product in PRODUCTS:  # add the product to file
+        #     product_file.write(
+        #         product.id + ' ' + product.name + ' ' + str(product.amount) + ' ' + str(product.price) + '\n')
         print('Product added successfully.')
 
 

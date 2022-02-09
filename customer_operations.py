@@ -16,7 +16,7 @@ class Customer:
         return f"{self.id}, {self.name},{self.address}"
 
 
-def customer_display_menu(): # displays menu options for customer functions
+def customer_display_menu():  # displays menu options for customer functions
     while True:
         selection = input(""" Welcome to the customer menu! Enter 0 to if you want to exit program:\n
                 1. Add customer\n
@@ -40,10 +40,12 @@ def customer_display_menu(): # displays menu options for customer functions
         else:
             print('\nValue: {} did not match any menu choice'.format(selection))
 
+    pass
 
-def add_customers(): # FUNCTION TO ADD CUSTOMER TO FILE
+
+def add_customers():  # FUNCTION TO ADD CUSTOMER TO FILE
     def id_check():  # check uniqueness of id
-        with open("customer.txt", "r") as customerfile: # open  customer file in read mode
+        with open("customer.txt", "r") as customerfile:  # open  customer file in read mode
             global customer_id
             customer_id = input('Assign a unique ID(Customer Phone Number): ')
             id_list = []
@@ -63,9 +65,10 @@ def add_customers(): # FUNCTION TO ADD CUSTOMER TO FILE
     new_customer = Customer(customer_id, customer_name, customer_address)
     CUSTOMERS.append(new_customer)
     # write customer into the file
-    with open('customer.txt', 'a+', newline='') as customer_file:
-        for customer in CUSTOMERS:
-            customer_file.write(customer.id + ' ' + customer.name + ' ' + customer.address + '\n')
+    with open('customer.txt', 'a+') as customer_file:
+        customer_file.write(customer_id + ' ' + customer_name + ' ' + customer_address + '\n')
+        # for customer in CUSTOMERS:
+        #     customer_file.write(customer.id + ' ' + customer.name + ' ' + customer.address + '\n')
         print('Customer added to file successfully.')
 
 
@@ -170,3 +173,4 @@ def view_customers():  # view all customers on file
 # view_customers()
 if __name__ == '__main__':
     customer_display_menu()
+    pass

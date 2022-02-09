@@ -24,15 +24,14 @@ def purchase_display_menu():
 
 def purchase():
     def check_customer():
-        global cust_id
-        cust_id = input('Enter the customer ID: ')
+        global customer_id
+        customer_id = input('Enter the customer ID: ')
         with open('customer.txt', 'r') as customerfile:
             lines = customerfile.readlines()
             for line in lines:
                 line_stripped = line.strip()
                 line_list = line_stripped.split(' ')
-
-                if line_list[0] == cust_id:
+                if line_list[0] == customer_id:
                     customer.append(line_list[1])
                     print(customer)
 
@@ -45,29 +44,30 @@ def purchase():
             lines = product_file1.readlines()
             for line in lines:
                 line_stripped = line.strip()
-                line_split = line.split(' ')
+                line_split = line_stripped.split(' ')
                 if line_split[0] == product_id:
-                    product.append(line_split[1])
-            print(product)
-            product1 = product[0]  # the product list
-            product_amount = int(line_split[2])
-            product_price = float(line_split[3])
-            print('Product to be sold: ', product1)
-            print('Doses in stock:', str(product_amount))
-            print('Product Price:', product_price)
-
+                    name = line_split[1]
+                    global doses
+                    doses = int(line_split[2])
+                    price = float(line_split[3])
+                    product = line_split
+                    print(product)
+                    print('Product to be sold: ', name)
+                    print('Doses in stock:', doses)
+                    print('Product Price:', price)
+        global amount
         amount = int(input('Enter number of doses you would like to sell: '))
         if amount < 1:
             print("ERROR")
             check_product()
-        elif amount > product_amount:
-            print(f"The {amount} is more than what is available which is {product_amount}.")
+        elif amount > doses:
+            print(f"The {amount} is more than what is available which is {doses}.")
             check_product()
 
         else:
-            total_price = amount * product_price
+            total_price = amount * price
             # create a purchases list
-            purchases.append([cust_id, customer[0], product_id, product1, amount, product_price, total_price])
+            purchases.append([customer_id, customer[0], product_id, name, amount, price, total_price])
             print(purchases)
 
             another_purchase = input("""
@@ -85,7 +85,8 @@ def purchase():
     def checking_out():
         total_purchases = 0
         for purchase in purchases:
-            total_purchases += purchases[0][6]
+            print(purchase)
+            total_purchases += purchase[6]
         print(total_purchases)
 
         cash = int(input('Enter amount of money customer has given: '))
@@ -108,8 +109,8 @@ def purchase():
             print()
             space = ' '
             for purchase in purchases:
-                print(f"{purchases[0][3]}")
-                print(f'{purchases[0][4]} {space} {purchases[0][5]} {space}{purchases[0][6]}')
+                print(f"{purchase[3]}")
+                print(f'{purchase[4]} {space} {purchase[5]} {space}{purchase[6]}')
                 print()
             print('Amount Tendered:    ', cash)
             print('Total Purchases:    ', total_purchases)
@@ -117,37 +118,43 @@ def purchase():
             print()
             print('Welcome Again')
 
-            with open('purchases.txt', 'a+') as purchasesfile:
-                purchasesfile.write(cust_id + ' ' + customer[0] + ' ' + product_id + ' ' + purchases[0][3] + ' ' + str(
-                    purchases[0][4]) + ' ' + str(purchases[0][5]) + ' ' + str(total_purchases))
+        with open('purchases.txt', 'a+') as purchasesfile:
+            purchasesfile.write(customer_id + ' ' + customer[0] + ' ' + product_id + ' ' + purchase[3] + ' ' + str(
+                purchase[4]) + ' ' + str(purchase[5]) + ' ' + str(purchase[6]) + '\n')
 
-                print('purchases added')
+            print('purchases added')
 
     checking_out()
 
     def update_records():
         for purchase in purchases:
-            update_id = purchases[0][2]
-            quantity = purchases[0][4]
-
+            print(purchase)
+            update_id = purchase[2]  # product_id
+            quantity = purchase[4]  # amount bought
             # product_id = input('Enter the product ID to update: ')
             with open('products.txt', 'r+') as productfile2:
                 lines = productfile2.readlines()
+                print(lines)
                 productfile2.seek(0)
                 for line in lines:
+                    # print(line)
                     line_stripped = line.strip()
                     line_split = line_stripped.split(' ')
                     if line_split[0] == update_id:
-                        print('Found product!', line_split[1])
                         print(line_split)
-                    elif line_split[0] != product_id:
+                        print('Found product!', line_split[1])
+                        quantity1 = line_split[2]
+                        new_quantity = int(quantity1) - int(quantity)  # what's left
+                        print(new_quantity)
+                    elif line_split[0] != update_id:
                         productfile2.write(line)
                 productfile2.truncate()  # cut out the product to be updated
-                new_quantity = int(line_split[2]) - int(quantity)
-                with open('products.txt', 'a+') as productfile2:
-                    productfile2.write(
-                        update_id + ' ' + line_split[1] + ' ' + str(new_quantity) + ' ' + str(line_split[3]) + '\n')
-                    print('inventory updated successfully.')
+                new_product = [update_id, line_split[1], str(new_quantity), str(line_split[3])]
+                print(new_product)
+        with open('products.txt', 'a+') as productfile2:
+            productfile2.write(
+                update_id + ' ' + line_split[1] + ' ' + str(new_quantity) + ' ' + str(line_split[3]) + '\n')
+        print('inventory updated successfully.')
 
     update_records()
 
